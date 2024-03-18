@@ -5,30 +5,43 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
-public class Servidor {
+
+
+public class Server {
     public static void main(String[] args) {
 
         ServerSocket servidor = null;
         Socket socket = null;
-        final int PUERTO = 5000;
         DataInputStream in;
         DataOutputStream out;
 
+        final int port = 5050;
 
         try {
-            servidor = new ServerSocket(PUERTO);
-            System.out.println("Serivodr iniciando");
+
+            servidor = new ServerSocket(port);
+            System.out.println("Start Server");
 
             while(true){
-                socket = servidor.accept();
+                socket = servidor.accept();  //Espero a que un cliente se conecte
+
+                System.out.println("Client Connected");
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+
+                String message = in.readUTF();
+                System.out.println(message);
+
+                out.writeUTF("Hi Everyone");
+
+                socket.close();
+                System.out.println("Client disconnected ");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE,null,e);
         }
-
-
     }
 }
