@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,22 +17,24 @@ public class Client {
 
         {
             try {
+                while(true) {
+                    Socket socket = new Socket(host, port);//Creo el socket para conectarme con el cliente
 
-                Socket socket = new Socket(host, port);//Creo el socket para conectarme con el cliente
+                    in = new DataInputStream(socket.getInputStream());
+                    out = new DataOutputStream(socket.getOutputStream());
 
-                in = new DataInputStream(socket.getInputStream());
-                out = new DataOutputStream(socket.getOutputStream());
+                    out.writeUTF("Hi Client");//Envio un mensaje al cliente
 
-                out.writeUTF("Hi Client");//Envio un mensaje al cliente
+                    String message = in.readUTF();//Recibo el mensaje del servidor
 
-                String message = in.readUTF();//Recibo el mensaje del servidor
+                    System.out.println(message);
+                    socket.close();
 
-                System.out.println(message);
-                socket.close();
-
+                }
             } catch (IOException e) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE,null,e);
+                throw new RuntimeException(e);
             }
         }
+        }
     }
-}
+
